@@ -1,0 +1,46 @@
+---
+
+- name: 创建主从复制帐号 
+  #shell: mysql -uroot -p{{ root_password }} -e "GRANT REPLICATION SLAVE ON *.* TO '{{ rep_user }}'@'{{ '.'.join(hostvars[inventory_hostname]['ansible_default_ipv4']['address'].split('.')[:-1])+('.%') }}' IDENTIFIED BY '{{ rep_password }}'" 
+  tags: change
+
+  mysql_user:
+    #login_host: localhost
+    login_password: "{{ root_password }}"
+    login_user: root
+    host: "{{ '.'.join(hostvars[inventory_hostname]['ansible_default_ipv4']['address'].split('.')[:-1])+('.%') }}"
+    name: "{{ rep_user }}"
+    password: "{{ rep_password }}"
+    login_unix_socket: "{{ mysql_socket }}"
+    priv: "*.*:REPLICATION SLAVE"
+    state: present
+   
+
+
+
+- name: 客户端远程连接数据库
+  #shell: mysql -uroot -p"{{ root_password }}" -e "GRANT ALL PRIVILEGES ON *.* TO '{{ wduser_user }}'@'%'IDENTIFIED BY '{{ wduser_password }}' WITH GRANT OPTION;"
+
+  mysql_user:
+    #login_host: localhost
+    login_password: "{{ root_password }}"
+    login_user: root
+    name: "{{ wduser_user }}"
+    password: "{{ wduser_password }}"
+    host: '%' 
+    login_unix_socket: "{{ mysql_socket }}"
+    priv: "*.*:ALL"
+    state: present
+
+
+- name: Get Mysql-master Status
+  mysql_replication: 
+    mode: getmaster
+    login_user: root
+    login_password: "{{ root_password }}" 
+    login_unix_socket: "{{ mysql_socket }}"
+  register: master_status
+  tags: master 
+
+  
+

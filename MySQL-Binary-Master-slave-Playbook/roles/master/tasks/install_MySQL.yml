@@ -1,0 +1,29 @@
+---
+
+- name: Copy MySQL configure file
+  template: src=./templates/my.cnf.j2 dest=/etc/my.cnf
+
+- name: Initialize the MySQL
+  shell: cd {{ basedir}} && bin/mysqld --initialize  --basedir={{ basedir }} --datadir={{ datadir }} --user={{ user }} > /tmp/mysql_password.txt 2>&1
+
+- name: Execution environment variable
+  shell: echo 'export PATH={{ basedir }}/bin:$PATH' >>/etc/profile && source /etc/profile
+
+- name: Copy MySQL start file
+  template: src=./templates/mysqld.j2 dest=/etc/init.d/mysqld mode=755
+
+- name: Change owner
+  shell: cd /home/work/mysql && mkdir run && cd /home/work && chown -R work.work data && chown -R work.work mysql
+
+- name: Start MySQL
+  shell: /etc/init.d/mysqld start
+
+- name: Get Password
+  shell: awk '/password/ {print $11}' /tmp/mysql_password.txt
+  register: password
+
+- name: Change Password
+  shell: source /etc/profile && mysql -uroot -p"{{ password.stdout }}"  --connect-expired-password -e "SET PASSWORD = PASSWORD('{{ root_password }}');flush privileges;"
+
+- name: rm MySQL Package
+  shell: rm -rf {{ pack_home }}/mysql-*

@@ -1,0 +1,17 @@
+### 基础环境
+user: work
+mysql_port: 3306
+pack_home: /home/work
+basedir: /home/work/mysql
+datadir: /home/work/data/mysql
+logdir: "{{ basedir }}/logs"
+
+### MySQL root user password
+root_password: Abcd1234_gome
+
+### MySQL rep user password
+rep_user: rep
+rep_password: xinshouhou
+
+### MySQL Socket
+mysql_socket: "{{ basedir }}/run/mysql.sock"

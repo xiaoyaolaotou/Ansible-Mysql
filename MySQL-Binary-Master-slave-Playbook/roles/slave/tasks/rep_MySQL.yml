@@ -1,0 +1,49 @@
+---
+
+- name: Get Master IP
+  set_fact:
+    master: "{{ groups.master[0] }}"
+
+- name: SET 2
+  set_fact:
+    info_temp: "{{ hostvars[master]['master_status'] }}"
+
+- name: show
+  debug: var=info_temp['Position']
+
+
+
+- name: Configure replication on the slave.
+  mysql_replication:
+    mode: changemaster
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: "{{ mysql_socket }}"
+    master_host: "{{ master_host_ip }}"
+    master_user: "{{ rep_user }}"
+    master_password: "{{ rep_password }}"
+    master_log_file: "{{ info_temp['File'] }}"
+    master_log_pos: "{{ info_temp['Position'] }}"
+
+
+- name: Start slave
+  mysql_replication:
+    mode: startslave
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: "{{ mysql_socket }}"
+
+- name: Get Slave
+  mysql_replication:
+    mode: getslave
+    login_user: root
+    login_password: "{{ root_password }}"
+    login_unix_socket: "{{ mysql_socket }}"
+  register: slave_status
+
+- name: Slave_IO_Running 
+  debug: msg="Slave_IO_Running {{ slave_status.Slave_IO_Running }}"
+
+- name: Slave_SQL_Running 
+  debug: msg="Slave_SQL_Running {{ slave_status.Slave_SQL_Running }}"
+

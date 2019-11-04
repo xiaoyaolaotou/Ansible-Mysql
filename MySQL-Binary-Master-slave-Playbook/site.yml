@@ -1,0 +1,13 @@
+---
+- hosts: master
+#  gather_facts: yes
+#  remote_user: root 
+  roles:
+    - role: master
+
+
+- hosts: slave 
+  remote_user: root 
+  roles:
+    - role: slave 
+  tags: slave 

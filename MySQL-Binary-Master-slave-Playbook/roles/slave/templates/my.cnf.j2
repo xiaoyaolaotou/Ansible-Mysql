@@ -1,0 +1,47 @@
+[client]
+default-character-set=utf8
+socket=/home/work/mysql/run/mysql.sock
+
+[mysqld]
+user = {{user}} 
+port = {{mysql_port}}
+basedir={{basedir}}
+datadir={{datadir}}
+socket={{ basedir }}/run/mysql.sock
+pid-file={{ basedir }}/run/mysqld.pid
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+server-id ={{ ansible_default_ipv4.address.split(".")[-1] }} 
+log-bin=mysql-bin
+log-bin-index=binlogs.index
+binlog-format=row
+skip-host-cache
+skip-name-resolve
+skip-external-locking
+character-set-server=utf8
+lower_case_table_names=1
+event_scheduler=on
+log_bin_trust_function_creators=on
+
+max_connections = 3000  
+external-locking = FALSE  
+max_allowed_packet = 32M  
+sort_buffer_size = 8M  
+join_buffer_size = 2M   
+thread_cache_size = 300 
+query_cache_size = 64M 
+query_cache_limit = 4M  
+read_rnd_buffer_size = 8M
+
+innodb_buffer_pool_size = 8096M
+innodb_log_file_size = 128M
+innodb_log_files_in_group = 2
+innodb_log_buffer_size = 2M
+innodb_flush_log_at_trx_commit = 1
+sync_binlog = 1
+
+
+
+[mysqld_safe]
+log-error={{ logdir }}/err.log

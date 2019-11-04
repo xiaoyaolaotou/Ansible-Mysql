@@ -1,0 +1,36 @@
+---
+
+- name: yum python-pip 
+  yum: name=python-pip state=latest
+
+- name: pip mysql
+  shell: pip install pymysql
+
+- name: Create mysql group work
+  group: name={{ user }} state=present
+
+- name: Create mysql user work
+  user: name={{ user }} password={{ user }} group={{ user }} home=/home/{{ user }} shell=/bin/bash state=present
+
+- name: Copy MySQL Package
+  copy: src=./files/mysql-5.7.23-linux-glibc2.12-x86_64.tar dest=/home/work
+
+- name: Unpacking package
+  #unarchive: src=/home/work/mysql-5.7.23-linux-glibc2.12-x86_64.tar dest=/home/work/ copy=no
+  shell: cd {{ pack_home }} && tar xf mysql-5.7.23-linux-glibc2.12-x86_64.tar
+
+- name: Unpacking package gz
+  #unarchive: src=/home/work/mysql-5.7.23-linux-glibc2.12-x86_64.tar.gz /dest=/home/work/ copy=no
+  shell: cd {{ pack_home }} && tar xf mysql-5.7.23-linux-glibc2.12-x86_64.tar.gz
+
+- name: Change package name
+  shell: cd {{ pack_home }} &&  mv mysql-5.7.23-linux-glibc2.12-x86_64 mysql 
+
+- name: Create data dir
+  file: path={{ pack_home}}/data/mysql state=directory mode=755
+
+- name: Create logs dir
+  file: path={{ logdir }} state=directory mode=755 owner={{ user }} group={{ user }}
+
+- name: Create logs file 
+  file: path={{ logdir }}/err.log state=touch mode=755 owner={{ user }} group={{ user }}

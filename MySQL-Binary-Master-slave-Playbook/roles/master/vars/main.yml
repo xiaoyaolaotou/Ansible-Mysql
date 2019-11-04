@@ -1,0 +1,25 @@
+### 基础环境
+user: work
+mysql_port: 3306
+pack_home: /home/work
+basedir: /home/work/mysql
+datadir: /home/work/data/mysql
+logdir: "{{ basedir }}/logs"
+
+
+### MySQL root user password
+root_password: Abcd1234_gome
+
+### MySQL Socket
+mysql_socket: "{{ basedir }}/run/mysql.sock"
+
+
+### MySQL rep user password
+rep_user: rep
+rep_password: xinshouhou
+
+### MySQL remote user wduser password
+wduser_user: wduser
+wduser_password: wduser_2019_gome
+
+

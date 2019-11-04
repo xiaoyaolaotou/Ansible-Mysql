@@ -1,0 +1,11 @@
+---
+
+- name: Base Settings
+  include: copy_file.yml
+
+
+- name: Install MySQL 
+  include: install_MySQL.yml 
+
+- name: Master-slave replication
+  include: rep_MySQL.yml 
